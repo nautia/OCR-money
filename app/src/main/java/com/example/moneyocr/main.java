@@ -13,7 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.speech.tts.TextToSpeech;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
@@ -51,8 +50,6 @@ public class main extends AppCompatActivity {
     TextView txt;
     int cnt = 0;
 
-    TextToSpeech myTTS;
-
     private String[] permissions = {                          /* permissions 모음 */
             Manifest.permission.WRITE_EXTERNAL_STORAGE,     // 기기, 사진, 미디어, 파일 엑세스 권한
             Manifest.permission.CAMERA
@@ -69,14 +66,6 @@ public class main extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= 23) {              // 안드로이드 6.0 이상일 경우 퍼미션 체크 (API 23 이상!!)
             checkPermissions();  // checkPermissions() 함수 호출
         }
-
-        myTTS = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                myTTS.setLanguage(Locale.KOREAN);
-                myTTS.speak("지폐인식 기능이 실행되었습니다. 촬영 후 오른쪽 하단을 터치하십시오. 촬영 방법은 볼륨키 입니다.", TextToSpeech.QUEUE_FLUSH,null);
-            }
-        });
 
         img = findViewById(R.id.viewImage);
         replay = findViewById(R.id.button_replay);
@@ -98,7 +87,6 @@ public class main extends AppCompatActivity {
             public void onClick(View view) {
                 chk = 1;
                 setImageUri();
-                myTTS.speak("지폐인식 기능이 실행되었습니다. 촬영 후 오른쪽 하단을 터치하십시오. 촬영 방법은 볼륨키 입니다.", TextToSpeech.QUEUE_FLUSH,null);
             }
         });
 
@@ -179,19 +167,15 @@ public class main extends AppCompatActivity {
                 for (int i = 0; i < array.length; i++) {
                     if (array[i].equals("1000")) {
                         txt.setText("1000원 지폐가 인식되었습니다.");
-                        myTTS.speak("천원 입니다. 다시 촬영하시려면 왼쪽 하단 부분을 터치해주세요. 다시 들으시려면 오른쪽 하단 부분을 터치해주세요.", TextToSpeech.QUEUE_FLUSH, null);
                         cnt++;
                     } else if (array[i].equals("5000")) {
                         txt.setText("5000원 지폐가 인식되었습니다.");
-                        myTTS.speak("오천원 입니다. 다시 촬영하시려면 왼쪽 하단 부분을 터치해주세요. 다시 들으시려면 오른쪽 하단 부분을 터치해주세요.", TextToSpeech.QUEUE_FLUSH, null);
                         cnt++;
                     } else if (array[i].equals("10000")) {
                         txt.setText("10000원 지폐가 인식되었습니다.");
-                        myTTS.speak("만원 입니다. 다시 촬영하시려면 왼쪽 하단 부분을 터치해주세요. 다시 들으시려면 오른쪽 하단 부분을 터치해주세요.", TextToSpeech.QUEUE_FLUSH, null);
                         cnt++;
                     } else if (array[i].equals("50000")) {
                         txt.setText("50000원 지폐가 인식되었습니다.");
-                        myTTS.speak("오만원 입니다. 다시 촬영하시려면 왼쪽 하단 부분을 터치해주세요. 다시 들으시려면 오른쪽 하단 부분을 터치해주세요.", TextToSpeech.QUEUE_FLUSH, null);
                         cnt++;
                     }
                     // 인식률 저하 및 선택된 사진을 분석하지 못하기 때문에 차후에 생긴 버그에 대해서 수정해야함
@@ -202,11 +186,9 @@ public class main extends AppCompatActivity {
         }
         if(cnt >= 2) {
             txt.setText("지폐 두장이 인식되었습니다. 한장만 촬영해주세요.");
-            myTTS.speak("지폐 두장이 인식되었습니다. 한장만 촬영해주세요. 다시 촬영하시려면 왼쪽 하단 부분을 터치해주세요. 다시 들으시려면 오른쪽 하단 부분을 터치해주세요.", TextToSpeech.QUEUE_FLUSH, null);
         }
         else if(cnt == 0) {
             txt.setText("지폐가 인식되지 않았습니다. 다시 촬영해주세요.");
-            myTTS.speak("지폐가 인식되지 않았습니다. 다시 촬영해주세요. 다시 촬영하시려면 왼쪽 하단 부분을 터치해주세요. 다시 들으시려면 오른쪽 하단 부분을 터치해주세요.", TextToSpeech.QUEUE_FLUSH, null);
         }
         cnt = 0;
     }
@@ -338,19 +320,13 @@ public class main extends AppCompatActivity {
         finish();
     }
 
-    //앱종료시 tts를 같이 종료해 준다. (menu2 소스 참고함)
     @Override
     protected void onDestroy() {
-        if (myTTS != null) {
-            myTTS.stop();
-            myTTS.shutdown();
-        }
         super.onDestroy();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        myTTS.stop();
     }
 }
