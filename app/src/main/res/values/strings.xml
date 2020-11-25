@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Money OCR</string>
+    <string name="camera">촬  영</string>
+    <string name="result">다시 듣기</string>
+</resources>
